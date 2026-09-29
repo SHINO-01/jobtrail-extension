@@ -1,0 +1,16 @@
+{
+  "name": "jobtrail-extension",
+  "description": "Packaging and Chrome Web Store release pipeline for Jobtrail. The code lives in ./source (SHINO-01/jobtrail).",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.ts\"",
+    "check:package": "node scripts/check-package.ts"
+  },
+  "devDependencies": {
+    "chrome-webstore-upload-cli": "4.0.1"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "$comment": "Release gate for the built manifest. Any change to what the extension may access must be made here deliberately, in a reviewed commit. Adding a permission can make Chrome disable the extension for existing users until they re-approve it, and triggers extra Web Store review.",
+  "permissions": ["activeTab", "contextMenus", "scripting", "storage", "unlimitedStorage"],
+  "hostPermissions": [],
+  "optionalHostPermissions": [],
+  "allowContentScripts": false,
+  "maxPackageKB": 1024
+}

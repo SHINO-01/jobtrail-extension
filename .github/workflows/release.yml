@@ -1,0 +1,142 @@
+# Release pipeline: new source release tag → verify → pin + changelog → GitHub Release → Chrome Web Store.
+# Everything happens in one run because pushes/tags made with GITHUB_TOKEN don't trigger other workflows.
+name: Release
+
+on:
+  schedule:
+    - cron: '17 20 * * *' # daily, 06:17 Sydney
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    name: Detect new source release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      tag: ${{ steps.detect.outputs.tag }}
+      needed: ${{ steps.detect.outputs.needed }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: detect
+        run: |
+          source_url="$(git config -f .gitmodules submodule.source.url)"
+          tag="$(git ls-remote --tags --refs --sort=-version:refname "${source_url}" 'v*' | head -1 | sed 's#.*refs/tags/##')"
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "No source release found." >> "$GITHUB_STEP_SUMMARY"
+            echo "needed=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if git ls-remote --exit-code --tags "https://github.com/${GITHUB_REPOSITORY}" "refs/tags/${tag}" >/dev/null; then
+            echo "${tag} is already released." >> "$GITHUB_STEP_SUMMARY"
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "New source release: **${tag}**" >> "$GITHUB_STEP_SUMMARY"
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+
+  verify:
+    name: Verify
+    needs: detect
+    if: needs.detect.outputs.needed == 'true'
+    uses: ./.github/workflows/integration.yml
+    with:
+      source_tag: ${{ needs.detect.outputs.tag }}
+
+  release:
+    name: GitHub Release
+    needs: [detect, verify]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write # push the pin + changelog, create the release
+      id-token: write # build provenance
+      attestations: write
+    env:
+      TAG: ${{ needs.detect.outputs.tag }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: true
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: extension-package
+          path: dist
+      - name: Pin source and update changelog
+        run: |
+          source_url="$(git config -f .gitmodules submodule.source.url)"
+          source_repo="${source_url#https://github.com/}"; source_repo="${source_repo%.git}"
+          git -C source fetch --depth 1 origin "refs/tags/${TAG}:refs/tags/${TAG}"
+          git -C source checkout --detach "${TAG}"
+          gh release view "${TAG}" -R "${source_repo}" --json body -q .body > source-notes.md
+          node scripts/changelog.ts add "${TAG}" source-notes.md "https://github.com/${source_repo}"
+          git add source CHANGELOG.md
+          if ! git diff --cached --quiet; then
+            git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "release: ${TAG}"
+            git push origin HEAD:main
+          fi
+      - name: Checksums
+        working-directory: dist
+        run: sha256sum ./*.zip > SHA256SUMS.txt && cat SHA256SUMS.txt >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/*.zip
+      - name: Create GitHub Release
+        env:
+          CWS_EXTENSION_ID: ${{ vars.CWS_EXTENSION_ID }}
+        run: |
+          node scripts/changelog.ts notes "${TAG}" > notes.md
+          gh release create "${TAG}" dist/*.zip dist/SHA256SUMS.txt \
+            --target "$(git rev-parse HEAD)" --title "Jobtrail ${TAG}" --notes-file notes.md
+          if [ -z "${CWS_EXTENSION_ID}" ]; then
+            echo "Chrome Web Store not configured yet: upload the zip from the release manually (see README)." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  publish:
+    name: Chrome Web Store
+    needs: [detect, release]
+    # Skipped until the store listing exists and credentials are configured (README → One-time setup).
+    if: vars.CWS_EXTENSION_ID != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: chrome-web-store # requires manual approval; holds the store credentials
+      url: https://chromewebstore.google.com/detail/${{ vars.CWS_EXTENSION_ID }}
+    steps:
+      # No source code runs in this job: only the verified zip and the pinned upload CLI.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: extension-package
+          path: dist
+      - name: Upload and submit for review
+        env:
+          EXTENSION_ID: ${{ vars.CWS_EXTENSION_ID }}
+          PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+          CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+          TAG: ${{ needs.detect.outputs.tag }}
+        run: |
+          npx chrome-webstore-upload --source dist/*.zip
+          echo "Submitted **${TAG}** to the Chrome Web Store for review." >> "$GITHUB_STEP_SUMMARY"

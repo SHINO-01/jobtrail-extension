@@ -1,0 +1,78 @@
+# Codebase health + integration for one source version, on the production build that ships.
+# Called by release.yml for each candidate; also runs on PRs to this repo.
+name: Integration
+
+on:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      source_tag:
+        description: Source release tag to verify (default = the pinned submodule commit)
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    name: Integration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: true
+          persist-credentials: false
+
+      - name: Check out candidate source version
+        if: inputs.source_tag
+        env:
+          TAG: ${{ inputs.source_tag }}
+        run: |
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::Invalid tag '$TAG'"; exit 1; }
+          git -C source fetch --depth 1 origin "refs/tags/${TAG}:refs/tags/${TAG}"
+          git -C source checkout --detach "${TAG}"
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            source/package-lock.json
+
+      - name: Release tooling tests
+        run: npm ci && npm test
+
+      # Health: new advisories can appear after the source was tested.
+      - name: Install & audit source dependencies
+        working-directory: source
+        run: |
+          npm ci
+          npm audit signatures
+          npm audit --omit=dev --audit-level=high
+
+      - name: Build & package
+        working-directory: source
+        run: npm run zip
+
+      - name: Manifest policy gate
+        run: |
+          version="$(node -p "require('./source/package.json').version")"
+          node scripts/check-package.ts source/.output/chrome-mv3 --expect-version "${version}"
+
+      # Integration: smoke-test the exact production build that will be uploaded.
+      - name: Smoke test production build
+        working-directory: source
+        run: |
+          npx playwright install --with-deps --no-shell chromium
+          npx playwright test --project=smoke
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: extension-package
+          path: source/.output/*-chrome.zip
+          if-no-files-found: error
+          retention-days: 30
