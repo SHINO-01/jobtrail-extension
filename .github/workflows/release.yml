@@ -100,7 +100,7 @@ jobs:
         run: |
           node scripts/changelog.ts notes "${TAG}" > notes.md
           gh release create "${TAG}" dist/*.zip dist/SHA256SUMS.txt \
-            --target "$(git rev-parse HEAD)" --title "Jobtrail ${TAG}" --notes-file notes.md
+            --target "$(git rev-parse HEAD)" --title "Rolestash ${TAG}" --notes-file notes.md
           if [ -z "${CWS_EXTENSION_ID}" ]; then
             echo "Chrome Web Store not configured yet: upload the zip from the release manually (see README)." >> "$GITHUB_STEP_SUMMARY"
           fi

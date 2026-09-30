@@ -1,10 +1,10 @@
-# jobtrail-extension
+# rolestash-extension
 
-[![Release](https://github.com/SHINO-01/jobtrail-extension/actions/workflows/release.yml/badge.svg)](https://github.com/SHINO-01/jobtrail-extension/actions/workflows/release.yml)
-[![Latest](https://img.shields.io/github/v/release/SHINO-01/jobtrail-extension)](https://github.com/SHINO-01/jobtrail-extension/releases/latest)
+[![Release](https://github.com/SHINO-01/rolestash-extension/actions/workflows/release.yml/badge.svg)](https://github.com/SHINO-01/rolestash-extension/actions/workflows/release.yml)
+[![Latest](https://img.shields.io/github/v/release/SHINO-01/rolestash-extension)](https://github.com/SHINO-01/rolestash-extension/releases/latest)
 
-Packaging and Chrome Web Store releases for **Jobtrail**. The code lives in
-[SHINO-01/jobtrail](https://github.com/SHINO-01/jobtrail) and is pinned here as
+Packaging and Chrome Web Store releases for **Rolestash**. The code lives in
+[SHINO-01/rolestash](https://github.com/SHINO-01/rolestash) and is pinned here as
 the `source/` git submodule, always at a released tag.
 
 This repo holds no application code. It decides **what ships**: which source
@@ -13,19 +13,19 @@ the artifact that gets uploaded.
 
 ```
 source release vX.Y.Z ──► Detect ──► Verify ──────────────────► GitHub Release ──► Chrome Web Store
-(SHINO-01/jobtrail)        daily or   audit · build · manifest    pin + CHANGELOG     approval required,
+(SHINO-01/rolestash)        daily or   audit · build · manifest    pin + CHANGELOG     approval required,
                            manual     policy gate · smoke E2E     zip + SHA256 +      upload + submit
                                                                   provenance          for review
 ```
 
-Full design: [CI/CD guide](https://github.com/SHINO-01/jobtrail/blob/dev/docs/guides/ci-cd.md)
-and [ADR-0008](https://github.com/SHINO-01/jobtrail/blob/dev/docs/adr/0008-two-repo-release-pipeline.md).
+Full design: [CI/CD guide](https://github.com/SHINO-01/rolestash/blob/dev/docs/guides/ci-cd.md)
+and [ADR-0008](https://github.com/SHINO-01/rolestash/blob/dev/docs/adr/0008-two-repo-release-pipeline.md).
 
 ## Layout
 
 | Path                              | What                                                                  |
 | --------------------------------- | --------------------------------------------------------------------- |
-| `source/`                         | Submodule → SHINO-01/jobtrail at the released tag                     |
+| `source/`                         | Submodule → SHINO-01/rolestash at the released tag                     |
 | `policy/manifest-policy.json`     | Permissions the shipped manifest must match **exactly**               |
 | `store/`                          | Store listing text, permission justifications, screenshots (1280×800) |
 | `CHANGELOG.md`                    | One entry per release, generated from the source release notes       |
@@ -43,15 +43,15 @@ _Chrome Web Store_, review and approve it.
 
 ## One-time setup
 
-1. **Repository settings.** From a clone of SHINO-01/jobtrail, run
+1. **Repository settings.** From a clone of SHINO-01/rolestash, run
    `bash scripts/setup-github.sh`. It configures both repos: rulesets, security
    features, Actions restrictions, and the `chrome-web-store` environment.
 2. **First store upload (manual, once).** Download the zip from the latest
-   [release](https://github.com/SHINO-01/jobtrail-extension/releases/latest),
+   [release](https://github.com/SHINO-01/rolestash-extension/releases/latest),
    create the item in the
    [Chrome Web Store developer dashboard](https://chrome.google.com/webstore/devconsole),
    upload the zip, and fill in the listing from [`store/listing.md`](store/listing.md).
-   Use `https://github.com/SHINO-01/jobtrail-extension/blob/main/PRIVACY.md` as
+   Use `https://rolestash.com/privacy` as
    the privacy policy URL. Submit it for review.
 3. **API credentials.** Follow
    [chrome-webstore-upload-keys](https://github.com/fregante/chrome-webstore-upload-keys)
@@ -82,5 +82,5 @@ _Chrome Web Store_, review and approve it.
   upload CLI).
 - Every release zip has SHA-256 checksums and a
   [build provenance attestation](https://docs.github.com/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds).
-  Verify with `gh attestation verify <zip> -R SHINO-01/jobtrail-extension`.
+  Verify with `gh attestation verify <zip> -R SHINO-01/rolestash-extension`.
 - Actions are pinned to commit SHAs and kept current by Dependabot.
