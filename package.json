@@ -1,6 +1,6 @@
 {
-  "name": "jobtrail-extension",
-  "description": "Packaging and Chrome Web Store release pipeline for Jobtrail. The code lives in ./source (SHINO-01/jobtrail).",
+  "name": "rolestash-extension",
+  "description": "Packaging and Chrome Web Store release pipeline for Rolestash. The code lives in ./source (SHINO-01/rolestash).",
   "private": true,
   "type": "module",
   "engines": {
