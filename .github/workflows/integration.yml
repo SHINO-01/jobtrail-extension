@@ -26,11 +26,18 @@ jobs:
           submodules: true
           persist-credentials: false
 
+      # Releases verify the tag they're about to ship. Pull requests here change
+      # what the *next* release may do, so they verify the newest source release.
       - name: Check out candidate source version
-        if: inputs.source_tag
+        if: inputs.source_tag || github.event_name == 'pull_request'
         env:
           TAG: ${{ inputs.source_tag }}
         run: |
+          if [ -z "$TAG" ]; then
+            source_url="$(git config -f .gitmodules submodule.source.url)"
+            TAG="$(git ls-remote --tags --refs --sort=-version:refname "${source_url}" 'v*' | head -1 | sed 's#.*refs/tags/##')"
+            echo "Verifying against the newest source release: ${TAG}" >> "$GITHUB_STEP_SUMMARY"
+          fi
           [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::Invalid tag '$TAG'"; exit 1; }
           git -C source fetch --depth 1 origin "refs/tags/${TAG}:refs/tags/${TAG}"
           git -C source checkout --detach "${TAG}"
