@@ -9,7 +9,7 @@ Rolestash — Job Application Tracker
 
 ## Summary (≤132 characters)
 
-Save any job posting to a Kanban board in one click. Autofill applications, track every reply. Local-first, no AI.
+The private job tracker: save postings in one click, autofill applications, track every reply. No AI, no data selling.
 
 ## Category
 
@@ -20,6 +20,8 @@ Productivity → Workflow & Planning
 English
 
 ## Description
+
+The private job application tracker. No AI reading your applications, no access to your inbox, no data selling — from US$7.
 
 Rolestash turns job postings into cards on a Kanban board, so you always know where every application stands.
 
@@ -32,17 +34,19 @@ A BOARD YOU'LL ACTUALLY USE
 • Drag cards through Saved → Applied → Screening → Interviewing → Offer.
 • Notes, tags, priorities, closing-date warnings and a timeline of every move.
 • Side panel: keep Rolestash open beside any page.
+• Autofill your name, contact details, address and links on any application form, free.
+• Up to 30 active jobs free (rejected and withdrawn jobs don't count).
 • Export to CSV or a JSON backup at any time, on every plan.
 
-PRO: US$7/month or US$59/year, with a 30-day free trial and no card needed
-• Up to 60 active jobs (Free: 15).
-• Application autofill: fill Greenhouse, Lever, Ashby and most careers forms from your profile, which you can start from your résumé (PDF or Word). It never answers demographic questions and never submits for you.
+PRO: US$7/month, US$18 every 3 months, or US$59/year
+• Up to 60 active jobs.
+• Full autofill on Greenhouse, Lever, Ashby and most careers forms: your current role, work rights, salary, notice period and saved answers too, and start your profile from your résumé (PDF or Word). It never answers demographic questions and never submits for you.
 • Insights: applications per week, how far applications get, reply rates, the sites that work best for you, and a chart of where your applications end up.
 • Contacts, interview rounds and documents per job, and a calendar export.
 • Bulk actions, follow-up reminders, closing-date alerts, custom columns, capture from a pasted link and your full history.
 • Sync across up to 3 computers.
 
-ADVANCED: US$15/month or US$159/year
+ADVANCED: US$15/month, US$39 every 3 months, or US$159/year. Try it free for 14 days, no card needed
 • Unlimited active jobs.
 • Automatic status updates: forward job emails to your private address and the board moves the card ("we'd like to interview you", "unfortunately…"), with interview times and join links on the card. Plain rules, no AI, no access to your mailbox.
 • Sync across up to 5 devices, including your phone through the web board.
