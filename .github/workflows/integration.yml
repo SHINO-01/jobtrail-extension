@@ -26,11 +26,18 @@ jobs:
           submodules: true
           persist-credentials: false
 
+      # Releases verify the tag they're about to ship. Pull requests here change
+      # what the *next* release may do, so they verify the newest source release.
       - name: Check out candidate source version
-        if: inputs.source_tag
+        if: inputs.source_tag || github.event_name == 'pull_request'
         env:
           TAG: ${{ inputs.source_tag }}
         run: |
+          if [ -z "$TAG" ]; then
+            source_url="$(git config -f .gitmodules submodule.source.url)"
+            TAG="$(git ls-remote --tags --refs --sort=-version:refname "${source_url}" 'v*' | head -1 | sed 's#.*refs/tags/##')"
+            echo "Verifying against the newest source release: ${TAG}" >> "$GITHUB_STEP_SUMMARY"
+          fi
           [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::Invalid tag '$TAG'"; exit 1; }
           git -C source fetch --depth 1 origin "refs/tags/${TAG}:refs/tags/${TAG}"
           git -C source checkout --detach "${TAG}"
@@ -54,8 +61,15 @@ jobs:
           npm audit signatures
           npm audit --omit=dev --audit-level=high
 
+      # Accounts are on only when these repository variables are set (public values:
+      # the Supabase URL, its publishable key and the Google OAuth client ID). Unset,
+      # the build has no backend, exactly as before launch.
       - name: Build & package
         working-directory: source
+        env:
+          WXT_SUPABASE_URL: ${{ vars.WXT_SUPABASE_URL }}
+          WXT_SUPABASE_ANON_KEY: ${{ vars.WXT_SUPABASE_ANON_KEY }}
+          WXT_GOOGLE_CLIENT_ID: ${{ vars.WXT_GOOGLE_CLIENT_ID }}
         run: |
           npm run zip
           mkdir -p ../dist && cp .output/*-chrome.zip ../dist/

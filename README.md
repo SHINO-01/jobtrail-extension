@@ -26,7 +26,7 @@ and [ADR-0008](https://github.com/SHINO-01/rolestash/blob/dev/docs/adr/0008-two-
 | Path                              | What                                                                  |
 | --------------------------------- | --------------------------------------------------------------------- |
 | `source/`                         | Submodule → SHINO-01/rolestash at the released tag                     |
-| `policy/manifest-policy.json`     | Permissions the shipped manifest must match **exactly**               |
+| `policy/manifest-policy.json`     | Permissions the shipped manifest must match **exactly** (plus the accounts-only pair) |
 | `store/`                          | Store listing text, permission justifications, screenshots (1280×800) |
 | `CHANGELOG.md`                    | One entry per release, generated from the source release notes       |
 | `scripts/check-package.ts`        | The manifest policy gate                                              |
@@ -62,6 +62,16 @@ _Chrome Web Store_, review and approve it.
    the protected environment, and the extension ID becomes the
    `CWS_EXTENSION_ID` variable. From then on, _Release_ uploads and submits each
    new version after you approve it.
+5. **Turn accounts on (launch).** Set three repository _variables_. They're
+   public values and they aren't secrets:
+   - `WXT_SUPABASE_URL`;
+   - `WXT_SUPABASE_ANON_KEY` (the publishable key);
+   - `WXT_GOOGLE_CLIENT_ID`.
+
+   While they're unset, the release build has no backend, as before launch.
+   Once they're set, the build adds `identity` and `externally_connectable`
+   (`rolestash.com/board/*` only). The policy gate allows those two only
+   together, and the smoke tests check accounts mode.
 
 ## Changing what ships
 
