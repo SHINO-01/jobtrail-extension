@@ -6,6 +6,47 @@ release pipeline from the matching source release in
 records exactly which source version every package was built from.
 Developer-level history lives in the source repo's CHANGELOG.
 
+## [0.4.0] — 2026-10-02
+
+Built from source [v0.4.0](https://github.com/SHINO-01/rolestash/releases/tag/v0.4.0).
+
+### Added
+
+- **Pro and Advanced can be bought:** payments are live through Paddle, our
+  merchant of record, in your own currency.
+
+### Changed
+
+- **More on the free plan:** 30 active jobs (was 15), and autofill for your
+  name, contact details, address and links. Pro still fills everything else
+  (current role, work rights, salary, saved answers) and can start from your
+  résumé.
+- **rolestash.com** now leads with what makes Rolestash different: no AI
+  reading your applications, no inbox access, no data selling.
+- **No name to type:** Account greets you by the first name from your Google
+  account or your email address; the display-name field is gone.
+- **Round local prices** in the eurozone (€6.50 / €13.99 a month, as in
+  Ireland), New Zealand, Switzerland, Sweden, Japan and Canada (plus tax),
+  instead of exact conversions; and in Vietnam, Indonesia, Cambodia, Laos and
+  Thailand the checkout total is now the round price too (tax included).
+- **Regional prices:** lower prices in lower-income countries, set by hand in
+  local currency where possible (for example ₹249, R$19.90, MX$79 or US$3 a
+  month for Pro), not converted from the US price.
+- **Prices in your currency:** Account in the extension and the web board show
+  plan prices in your local currency (from Paddle, by location), with US
+  dollars as the fallback; rolestash.com links to prices in your currency.
+
+### Fixed
+
+- **A plan cancelled to end at the period's end** now shows "until 2 Nov…
+  canceled" instead of "Renews on 2 Nov", and can't be bought twice.
+- **Switching plans** now says "You'll be charged A$12.98 now… Then A$22.99 a
+  month from 2 Nov", in your own currency throughout (it mixed in US prices),
+  and the button's loading spinner no longer squashes into a "[".
+- **Saving your profile** in Account works again (it failed on the server).
+- **Subscribing from the extension** opens Paddle's checkout again; it got
+  stuck on "Opening secure checkout…".
+
 ## [0.2.0] — 2026-10-02
 
 Built from source [v0.2.0](https://github.com/SHINO-01/rolestash/releases/tag/v0.2.0).
