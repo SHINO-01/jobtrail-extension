@@ -87,7 +87,7 @@ Host permissions granted at install: none. Content scripts: none. Remote code: n
 
 Collected (only when the user creates an optional account):
 
-- **Personally identifiable information:** email address, and optionally a display name and profile photo.
+- **Personally identifiable information:** email address, and optionally a profile photo.
 - **Authentication information:** sign-in session tokens. No passwords.
 - **Website content:** the job postings the user saves, when they turn on sync.
 - **Personal communications:** emails the user chooses to forward for automatic status updates (Advanced). They're read in memory, and only the extracted update is kept, for at most 90 days.
