@@ -1,8 +1,14 @@
 {
-  "$comment": "Release gate for the built manifest. Any change to what the extension may access must be made here deliberately, in a reviewed commit. Adding a permission can make Chrome disable the extension for existing users until they re-approve it, and triggers extra Web Store review.",
-  "permissions": ["activeTab", "contextMenus", "scripting", "storage", "unlimitedStorage"],
+  "$comment": "Release gate for the built manifest. Any change to what the extension may access must be made here deliberately, in a reviewed commit, and justified in store/listing.md. Adding a permission can make Chrome disable the extension for existing users until they re-approve it, and triggers extra Web Store review.",
+  "permissions": ["activeTab", "alarms", "contextMenus", "scripting", "sidePanel", "storage", "unlimitedStorage"],
+  "optionalPermissions": ["notifications"],
   "hostPermissions": [],
-  "optionalHostPermissions": [],
+  "optionalHostPermissions": ["http://*/*", "https://*/*"],
+  "accounts": {
+    "$comment": "Present only when the build has backend settings (the WXT_SUPABASE_* repository variables). Then both must appear, exactly.",
+    "permissions": ["identity"],
+    "externallyConnectable": ["https://rolestash.com/board/*"]
+  },
   "allowContentScripts": false,
-  "maxPackageKB": 1024
+  "maxPackageKB": 2048
 }

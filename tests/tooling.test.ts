@@ -11,11 +11,45 @@ const policy = JSON.parse(readFileSync(resolve(root, 'policy/manifest-policy.jso
 const good = {
   manifest_version: 3,
   version: '0.2.0',
-  permissions: ['activeTab', 'scripting', 'storage', 'unlimitedStorage', 'contextMenus'],
+  permissions: ['activeTab', 'scripting', 'storage', 'unlimitedStorage', 'contextMenus', 'alarms', 'sidePanel'],
+  optional_permissions: ['notifications'],
+  optional_host_permissions: ['https://*/*', 'http://*/*'],
+};
+const withAccounts = {
+  ...good,
+  permissions: [...good.permissions, 'identity'],
+  externally_connectable: { matches: ['https://rolestash.com/board/*'] },
 };
 
 test('a manifest matching policy passes', () => {
   assert.deepEqual(checkManifest(good, policy, '0.2.0'), []);
+});
+
+test('an accounts build passes with identity and exactly the web board', () => {
+  assert.deepEqual(checkManifest(withAccounts, policy, '0.2.0'), []);
+});
+
+test('accounts pieces never appear alone or widened', () => {
+  const noBoard = checkManifest({ ...withAccounts, externally_connectable: undefined }, policy);
+  assert.match(noBoard.join('\n'), /externally_connectable must be exactly/);
+  const wide = checkManifest(
+    { ...withAccounts, externally_connectable: { matches: ['https://rolestash.com/*'] } },
+    policy,
+  );
+  assert.match(wide.join('\n'), /externally_connectable must be exactly/);
+  const ids = checkManifest(
+    { ...withAccounts, externally_connectable: { matches: ['https://rolestash.com/board/*'], ids: ['*'] } },
+    policy,
+  );
+  assert.match(ids.join('\n'), /externally_connectable must be exactly/);
+  const boardOnly = checkManifest({ ...good, externally_connectable: withAccounts.externally_connectable }, policy);
+  assert.match(boardOnly.join('\n'), /only in accounts builds/);
+});
+
+test('the development key and new optional permissions fail', () => {
+  assert.match(checkManifest({ ...good, key: 'MIIB' }, policy).join('\n'), /development build/);
+  const tabs = checkManifest({ ...good, optional_permissions: ['notifications', 'tabs'] }, policy);
+  assert.match(tabs.join('\n'), /optional_permissions not allowed by policy: tabs/);
 });
 
 test('permission creep fails the gate', () => {
