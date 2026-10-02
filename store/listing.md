@@ -40,7 +40,7 @@ A BOARD YOU'LL ACTUALLY USE
 
 PRO: US$7/month, US$18 every 3 months, or US$59/year
 • Up to 60 active jobs.
-• Full autofill on Greenhouse, Lever, Ashby and most careers forms: your current role, work rights, salary, notice period and saved answers too, and start your profile from your résumé (PDF or Word). It never answers demographic questions and never submits for you.
+• Full autofill on Workday, Greenhouse, Lever, Ashby, SmartRecruiters and most careers forms: your current role, work rights, salary, notice period and saved answers too, and start your profile from your résumé (PDF or Word). It never answers demographic questions and never submits for you.
 • Insights: applications per week, how far applications get, reply rates, the sites that work best for you, and a chart of where your applications end up.
 • Contacts, interview rounds and documents per job, and a calendar export.
 • Bulk actions, follow-up reminders, closing-date alerts, custom columns, capture from a pasted link and your full history.
