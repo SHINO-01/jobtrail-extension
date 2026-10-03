@@ -85,12 +85,14 @@ Host permissions granted at install: none. Content scripts: none. Remote code: n
 
 ## Data usage disclosures (dashboard → Privacy)
 
-Collected (only when the user creates an optional account):
+Collected (only when the user creates an optional account, or chooses to send a problem report):
 
-- **Personally identifiable information:** email address, and optionally a profile photo.
+- **Personally identifiable information:** email address, the user's full name (from their Google account, or typed by them; they can skip it), and optionally a profile photo. With a problem report, an email address for our reply if the user gives one.
 - **Authentication information:** sign-in session tokens. No passwords.
 - **Website content:** the job postings the user saves, when they turn on sync.
-- **Personal communications:** emails the user chooses to forward for automatic status updates (Advanced). They're read in memory, and only the extracted update is kept, for at most 90 days.
+- **Personal communications:**
+  - emails the user chooses to forward for automatic status updates (Advanced). They're read in memory, and only the extracted update is kept, for at most 90 days;
+  - problem reports the user chooses to send us: their message, the extension version, browser, plan, and the page's address only if they tick it. Kept for at most 12 months.
 
 Not collected: health, financial or payment information (Paddle handles payments), location, web history, user activity.
 
