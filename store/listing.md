@@ -26,7 +26,7 @@ The private job application tracker. No AI reading your applications, no access 
 Rolestash turns job postings into cards on a Kanban board, so you always know where every application stands.
 
 CAPTURE IN ONE CLICK
-• Open a job on LinkedIn, SEEK, Indeed, Glassdoor, Workday, Greenhouse, Lever or almost any careers page, then click the Rolestash icon (or press Alt+J).
+• Open a job posting on a major job board or almost any careers page, then click the Rolestash icon (or press Alt+J).
 • Title, company, location, salary, closing date and the full description are filled in for you. Anything uncertain is flagged so you can check it before saving.
 • The same job found on two sites stays one card.
 
@@ -40,7 +40,7 @@ A BOARD YOU'LL ACTUALLY USE
 
 PRO: US$7/month, US$18 every 3 months, or US$59/year
 • Up to 60 active jobs.
-• Full autofill on Workday, Greenhouse, Lever, Ashby, SmartRecruiters and most careers forms: your current role, work rights, salary, notice period and saved answers too, and start your profile from your résumé (PDF or Word). It never answers demographic questions and never submits for you.
+• Full autofill on the common applicant tracking systems and most careers forms: your current role, work rights, salary, notice period and saved answers too, and start your profile from your résumé (PDF or Word). It never answers demographic questions and never submits for you.
 • Insights: applications per week, how far applications get, reply rates, the sites that work best for you, and a chart of where your applications end up.
 • Contacts, interview rounds and documents per job, and a calendar export.
 • Bulk actions, follow-up reminders, closing-date alerts, custom columns, capture from a pasted link and your full history.
